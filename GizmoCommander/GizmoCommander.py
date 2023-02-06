@@ -82,16 +82,16 @@ async def gizmo_server(ipAddress):
 async def determineCommand(isJawClenched, isFacingGizmo, gizmoClient):
     # if patient sees gizmo
     if isJawClenched and isFacingGizmo:
-        gizmoClient.goForward(NUM_STEPS)
+        await gizmoClient.goForward(NUM_STEPS)
         # move farther forward
     # else if patient is looking at gizmo but doesnt see it
     elif not isJawClenched and isFacingGizmo:
         # move backward
-        gizmoClient.goBackward(NUM_STEPS)
+        await gizmoClient.goBackward(NUM_STEPS)
     # else, patient not looking at gizmo! stop gizmo until they look again
     else:
         #stop
-        gizmoClient.stop()
+        await gizmoClient.stop()
 
 
 async def direct_gizmo(gizmoClient):
