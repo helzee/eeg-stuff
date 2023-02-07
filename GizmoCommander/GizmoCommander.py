@@ -1,9 +1,10 @@
 import asyncio
 import gizmoHttpClient
+import argparse
 
 #IP of this base station
 #BASE_IP = '10.65.70.129'
-BASE_IP = '127.0.0.1'
+# BASE_IP = '127.0.0.1'
 
 # seconds between commands
 COMMAND_INTERVAL = 0.5
@@ -57,10 +58,10 @@ async def collect_latest_head_direction_data(reader,writer):
         
         
 # Create the TCP server that will recieve messages from the EEG classification program
-async def eeg_server(ipAddress):
+async def eeg_server():
     # For every new TCP connection to this server, a new task is created and runs the
     # input function in the start_server() call
-    server = await asyncio.start_server(collect_latest_jaw_clench_data,ipAddress, EEG_PORT)
+    server = await asyncio.start_server(collect_latest_jaw_clench_data, port=EEG_PORT)
     addrs = ', '.join(str(sock.getsockname()) for sock in server.sockets)
     print(f'Serving on {addrs}')
     # this task never terminates unless explicitly told to
@@ -68,10 +69,10 @@ async def eeg_server(ipAddress):
         await server.serve_forever()
     
 # Create the TCP server that will recieve messages from the head direction program on Gizmo
-async def gizmo_server(ipAddress):
+async def gizmo_server():
     # For every new TCP connection to this server, a new task is created and runs the
     # input function in the start_server() call
-    server = await asyncio.start_server(collect_latest_head_direction_data, ipAddress, GIZMO_PORT)
+    server = await asyncio.start_server(collect_latest_head_direction_data, port=GIZMO_PORT)
     addrs = ', '.join(str(sock.getsockname()) for sock in server.sockets)
     print(f'Serving on {addrs}')
     # this task never terminates unless explicitly told to
@@ -102,14 +103,23 @@ async def direct_gizmo(gizmoClient):
         print('isFacingGizmo = ' + str(isFacingGizmo))
         await determineCommand(isJawClenched, isFacingGizmo, gizmoClient)
 
+def parseArgs():
+    argParser = argparse.ArgumentParser()
+    argParser.add_argument("-gp","--gizmo_port",help="Gizmo head direction TCP server port", required=True)
+    argParser.add_argument("-ep","--eeg_port",help="EEG classification TCP server port", required=True)
+    args = argParser.parse_args()
+    EEG_PORT = args.eeg_port
+    GIZMO_PORT = args.gizmo_port
+
 
 async def main():
+    parseArgs()
     async with gizmoHttpClient.GizmoHttpClient() as gizmoClient:
       # Initially, three tasks are created. However, for each client that connects to a server
       # another task will be generated
       async with asyncio.TaskGroup() as tg:
-         eeg_server_task = tg.create_task(eeg_server(BASE_IP))
-         gizmo_server_task = tg.create_task(gizmo_server(BASE_IP))
+         eeg_server_task = tg.create_task(eeg_server())
+         gizmo_server_task = tg.create_task(gizmo_server())
          direct_gizmo_task = tg.create_task(direct_gizmo(gizmoClient))
          # take keyboard input tasks (to shut it down)
       

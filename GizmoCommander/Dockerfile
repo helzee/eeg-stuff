@@ -1,22 +1,36 @@
 FROM ubuntu:18.04
 
-ENV SRC_DIR=/src
-ENV ENV_DIR=/env
+WORKDIR /app
 
-RUN apt install software-properties-common
+
+RUN apt-get update && \
+    apt-get install -y software-properties-common
 RUN add-apt-repository ppa:deadsnakes/ppa
-RUN apt update
-RUN apt install python3.11
+RUN apt install -y python3.11
+RUN apt-get install -y python3.11-dev
+# RUN apt-get install -y python3.11-distutils
+# RUN apt-get install -y python3.11-lib2to3
+# RUN apt-get install -y python3.11-gdbm
+# RUN apt-get install -y python3.11-tk
 
-ADD test $SRC_DIR
-ADD GizmoCommander.py $SRC_DIR
-ADD gizmoHttpClient.py $SRC_DIR
-ADD requirements.txt $ENV_DIR
+COPY . .
 
-RUN pip install -r $ENV_DIR/requirements.txt
+RUN pip3 install -r requirements.txt
 
-RUN
+ENV EEG_PORT=26783
+ENV GIZMO_PORT=26784
 
+EXPOSE ${EEG_PORT}
+EXPOSE ${GIZMO_PORT}
+
+CMD ["python", "-ep", ${EEG_PORT}, "-gp", ${GIZMO_PORT} ]
+
+# `python#.#-dev`: includes development headers for building C extensions
+# - `python#.#-venv`: provides the standard library `venv` module
+# - `python#.#-distutils`: provides the standard library `distutils` module
+# - `python#.#-lib2to3`: provides the `2to3-#.#` utility as well as the standard library `lib2to3` module
+# - `python#.#-gdbm`: provides the standard library `dbm.gnu` module
+# - `python#.#-tk`: provides the standard library `tkinter` module
 
 
 
