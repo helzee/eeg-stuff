@@ -32,6 +32,12 @@ class GizmoHttpClient():
                 
         except aiohttp.ClientConnectorError as e:
             print('Connection error', str(e))
+        except ConnectionRefusedError as e:
+            print('Connection error', str(e))
+        except Exception as e:
+            print('Connection error', str(e))
+        finally:
+            return
 
     async def goForward(self, nSteps):
         print('move forward')

@@ -26,7 +26,7 @@ EXPOSE ${GIZMO_PORT}
 
 
 
-CMD python3 gizmoCommander.py -ep ${EEG_PORT} -gp ${GIZMO_PORT}
+CMD python3 -u gizmoCommander.py -ep ${EEG_PORT} -gp ${GIZMO_PORT}
 
 # `python#.#-dev`: includes development headers for building C extensions
 # - `python#.#-venv`: provides the standard library `venv` module

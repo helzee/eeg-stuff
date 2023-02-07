@@ -1,3 +1,3 @@
 #!/bin/bash
 
-sudo docker run  helzee/gizmo-commander:1.0 
+sudo docker run --network host helzee/gizmo-commander:1.0 

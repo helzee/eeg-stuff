@@ -25,7 +25,7 @@ MSG_SIZE = 1
 
 # global variables used in logic for commanding gizmo
 # These variables represent the latest boolean received from each TCP server
-isJawClenched = False
+isJawClenched = True
 isFacingGizmo = True
 
 def isBoolean(msg):
