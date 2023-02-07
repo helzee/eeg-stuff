@@ -1,21 +1,20 @@
-FROM ubuntu:18.04
+FROM python:3.11.1
 
 WORKDIR /app
 
-
-RUN apt-get update && \
-    apt-get install -y software-properties-common
-RUN add-apt-repository ppa:deadsnakes/ppa
-RUN apt install -y python3.11
-RUN apt-get install -y python3.11-dev
-# RUN apt-get install -y python3.11-distutils
-# RUN apt-get install -y python3.11-lib2to3
-# RUN apt-get install -y python3.11-gdbm
-# RUN apt-get install -y python3.11-tk
+# Specify locales, or we encounter Python Syntax Erro for Non-UTF-8 character
+# https://stackoverflow.com/questions/27931668/encoding-problems-when-running-an-app-in-docker-python-java-ruby-with-u
+RUN apt update && apt -y install locales
+# Set the locale
+RUN locale-gen en_US.UTF-8  
+ENV LANG en_US.UTF-8  
+ENV LANGUAGE en_US:en  
 
 COPY . .
 
-RUN pip3 install -r requirements.txt
+# RUN python3.11 get-pip.py
+
+RUN pip install -r requirements.txt
 
 ENV EEG_PORT=26783
 ENV GIZMO_PORT=26784
@@ -23,7 +22,11 @@ ENV GIZMO_PORT=26784
 EXPOSE ${EEG_PORT}
 EXPOSE ${GIZMO_PORT}
 
-CMD ["python", "-ep", ${EEG_PORT}, "-gp", ${GIZMO_PORT} ]
+
+
+
+
+CMD python3 gizmoCommander.py -ep ${EEG_PORT} -gp ${GIZMO_PORT}
 
 # `python#.#-dev`: includes development headers for building C extensions
 # - `python#.#-venv`: provides the standard library `venv` module

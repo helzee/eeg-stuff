@@ -1,6 +1,9 @@
+# coding=utf8
 import asyncio
 import gizmoHttpClient
 import argparse
+import sys
+import aiohttp
 
 #IP of this base station
 #BASE_IP = '10.65.70.129'
@@ -115,13 +118,13 @@ def parseArgs():
 async def main():
     parseArgs()
     async with gizmoHttpClient.GizmoHttpClient() as gizmoClient:
-      # Initially, three tasks are created. However, for each client that connects to a server
-      # another task will be generated
-      async with asyncio.TaskGroup() as tg:
-         eeg_server_task = tg.create_task(eeg_server())
-         gizmo_server_task = tg.create_task(gizmo_server())
-         direct_gizmo_task = tg.create_task(direct_gizmo(gizmoClient))
-         # take keyboard input tasks (to shut it down)
+        # Initially, three tasks are created. However, for each client that connects to a server
+        # another task will be generated
+        async with asyncio.TaskGroup() as tg:
+            eeg_server_task = tg.create_task(eeg_server())
+            gizmo_server_task = tg.create_task(gizmo_server())
+            direct_gizmo_task = tg.create_task(direct_gizmo(gizmoClient))
+            # take keyboard input tasks (to shut it down)
       
 
 # I am using asyncio, because it allows me to create multiple tasks and run them concurrently
