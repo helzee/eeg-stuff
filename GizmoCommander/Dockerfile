@@ -16,8 +16,14 @@ COPY . .
 
 RUN pip install -r requirements.txt
 
+# port of tcp client sending EEG classification data
 ENV EEG_PORT=26783
+#port of tcp client sending facepose estimation results (server is running on gizmo)
 ENV GIZMO_PORT=26784
+# Address of gizmo
+ENV GIZMO_ADDRESS='10.65.65.87'
+# Port on gizmo that is recieving directions
+ENV GIZMO_DIRECTOR_PORT=5000
 
 EXPOSE ${EEG_PORT}
 EXPOSE ${GIZMO_PORT}
@@ -26,7 +32,7 @@ EXPOSE ${GIZMO_PORT}
 
 
 
-CMD python3 -u gizmoCommander.py -ep ${EEG_PORT} -gp ${GIZMO_PORT}
+CMD python3 -u gizmoCommander.py -ga ${GIZMO_ADDRESS} -gdp ${GIZMO_DIRECTOR_PORT} -ep ${EEG_PORT} -gp ${GIZMO_PORT}
 
 # `python#.#-dev`: includes development headers for building C extensions
 # - `python#.#-venv`: provides the standard library `venv` module

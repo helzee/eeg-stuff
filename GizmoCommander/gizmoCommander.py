@@ -18,6 +18,9 @@ EEG_PORT = 26783
 GIZMO_PORT = 26784
 # IP of this base station
 
+GIZMO_DIRECTOR_PORT = 5000
+GIZMO_IP = "10.65.65.87"
+
 NUM_STEPS = 1
 
 # 1 byte messages (just receiving booleans)
@@ -108,16 +111,22 @@ async def direct_gizmo(gizmoClient):
 
 def parseArgs():
     argParser = argparse.ArgumentParser()
-    argParser.add_argument("-gp","--gizmo_port",help="Gizmo head direction TCP server port", required=True)
+    argParser.add_argument("-ga","--gizmo_address",help="gizmo IP address", required=True)
+    argParser.add_argument("-gp","--gizmo_port",help="Gizmo face-pose estimation TCP server port", required=True)
     argParser.add_argument("-ep","--eeg_port",help="EEG classification TCP server port", required=True)
+    argParser.add_argument("-gdp","--gizmo_director_port",help="port to server on gizmo that takes directions", required=True)
+    
+    
     args = argParser.parse_args()
     EEG_PORT = args.eeg_port
     GIZMO_PORT = args.gizmo_port
+    GIZMO_DIRECTOR_PORT = args.gizmo_dorector_port
+    GIZMO_IP = args.gizmo_director_address
 
 
 async def main():
     parseArgs()
-    async with gizmoHttpClient.GizmoHttpClient() as gizmoClient:
+    async with gizmoHttpClient.GizmoHttpClient(GIZMO_IP, GIZMO_DIRECTOR_PORT) as gizmoClient:
         # Initially, three tasks are created. However, for each client that connects to a server
         # another task will be generated
         async with asyncio.TaskGroup() as tg:
