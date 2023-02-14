@@ -5,8 +5,8 @@ import argparse
 import sys
 import aiohttp
 
-#IP of this base station
-#BASE_IP = '10.65.70.129'
+# IP of this base station
+# BASE_IP = '10.65.70.129'
 # BASE_IP = '127.0.0.1'
 
 # seconds between commands
@@ -18,7 +18,7 @@ EEG_PORT = 26783
 GIZMO_PORT = 26784
 # IP of this base station
 
-GIZMO_DIRECTOR_PORT = 5000
+GIZMO_DIRECTOR_PORT = 40000
 GIZMO_IP = "10.65.65.87"
 
 NUM_STEPS = 1
@@ -31,38 +31,44 @@ MSG_SIZE = 1
 isJawClenched = True
 isFacingGizmo = True
 
+
 def isBoolean(msg):
-    return msg.lower() in ['true','false','0','1','t','f']
+    return msg.lower() in ['true', 'false', '0', '1', 't', 'f']
+
 
 def toBoolean(msg):
-    return msg.lower() in ['true','1','t']
+    return msg.lower() in ['true', '1', 't']
 
-    
+
 async def getMessage(reader):
     msg = await reader.read(MSG_SIZE)
-    
+
     return msg.decode().rstrip()
-    
+
 # Read 1 byte from the TCP socket. We expect either 1 or 0 representing true or false respectively
 # If the message is correctly formatted. update the corresponding global variable
-async def collect_latest_jaw_clench_data(reader,writer):
+
+
+async def collect_latest_jaw_clench_data(reader, writer):
     while (True):
         msg = await getMessage(reader)
-        
+
         if msg and isBoolean(msg):
             global isJawClenched
             isJawClenched = toBoolean(msg)
 
 # Read 1 byte from the TCP socket. We expect either 1 or 0 representing true or false respectively
-# If the message is correctly formatted. update the corresponding global variable          
-async def collect_latest_head_direction_data(reader,writer):
+# If the message is correctly formatted. update the corresponding global variable
+
+
+async def collect_latest_head_direction_data(reader, writer):
     while (True):
         msg = await getMessage(reader)
         if msg and isBoolean(msg):
             global isFacingGizmo
             isFacingGizmo = toBoolean(msg)
-        
-        
+
+
 # Create the TCP server that will recieve messages from the EEG classification program
 async def eeg_server():
     # For every new TCP connection to this server, a new task is created and runs the
@@ -73,8 +79,10 @@ async def eeg_server():
     # this task never terminates unless explicitly told to
     async with server:
         await server.serve_forever()
-    
+
 # Create the TCP server that will recieve messages from the head direction program on Gizmo
+
+
 async def gizmo_server():
     # For every new TCP connection to this server, a new task is created and runs the
     # input function in the start_server() call
@@ -97,7 +105,7 @@ async def determineCommand(isJawClenched, isFacingGizmo, gizmoClient):
         await gizmoClient.goBackward(NUM_STEPS)
     # else, patient not looking at gizmo! stop gizmo until they look again
     else:
-        #stop
+        # stop
         await gizmoClient.stop()
 
 
@@ -105,20 +113,25 @@ async def direct_gizmo(gizmoClient):
     # writer = await asyncio.open_connection(GIZMO_IP, GIZMO_PORT)
     while (True):
         await asyncio.sleep(COMMAND_INTERVAL)
-        print( 'isJawClenched = ' + str(isJawClenched))
+        print('isJawClenched = ' + str(isJawClenched))
         print('isFacingGizmo = ' + str(isFacingGizmo))
         await determineCommand(isJawClenched, isFacingGizmo, gizmoClient)
 
+
 def parseArgs():
     argParser = argparse.ArgumentParser()
-    argParser.add_argument("-ga","--gizmo_address",help="gizmo IP address", required=True)
-    argParser.add_argument("-gp","--gizmo_port",help="Gizmo face-pose estimation TCP server port", required=True)
-    argParser.add_argument("-ep","--eeg_port",help="EEG classification TCP server port", required=True)
-    argParser.add_argument("-gdp","--gizmo_director_port",help="port to server on gizmo that takes directions", required=True)
+    argParser.add_argument("-ga", "--gizmo_address",
+                           help="gizmo IP address", required=True)
+    argParser.add_argument(
+        "-gp", "--gizmo_port", help="Gizmo face-pose estimation TCP server port", required=True)
+    argParser.add_argument(
+        "-ep", "--eeg_port", help="EEG classification TCP server port", required=True)
+    argParser.add_argument("-gdp", "--gizmo_director_port",
+                           help="port to server on gizmo that takes directions", required=True)
     global EEG_PORT
     global GIZMO_PORT
     global GIZMO_DIRECTOR_PORT
-    
+
     args = argParser.parse_args()
     EEG_PORT = args.eeg_port
     GIZMO_PORT = args.gizmo_port
@@ -139,8 +152,7 @@ async def main():
             gizmo_server_task = tg.create_task(gizmo_server())
             direct_gizmo_task = tg.create_task(direct_gizmo(gizmoClient))
             # take keyboard input tasks (to shut it down)
-    
-      
+
 
 # I am using asyncio, because it allows me to create multiple tasks and run them concurrently
 
