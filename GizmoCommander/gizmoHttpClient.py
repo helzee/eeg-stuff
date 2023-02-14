@@ -2,22 +2,31 @@
 import asyncio
 import aiohttp
 
+IP = None
+PORT = None
+
 class GizmoHttpClient():
     
-    _ip = '10.65.65.87'
-    _port = 5000
+    _ip = IP
+    _port = PORT
     _base_url = None
     _session = None
 
-    async def __ainit__(self, ip, port):
-        self._ip = ip
-        self._port = port
+    def __init__(self):
+        self._ip = IP
+        self._port = PORT
         self._base_url = 'http://{0}:{1}'.format(self._ip,self._port)
         self._session = aiohttp.ClientSession()
-        return self
+        
+
+    async def __ainit__(self):
+        self._ip = IP
+        self._port = PORT
+        self._base_url = 'http://{0}:{1}'.format(self._ip,self._port)
+        self._session = aiohttp.ClientSession()
+        
 
     async def __aenter__(self):
-        self._session = aiohttp.ClientSession()
         return self
 
     async def __aexit__(self, *err):
@@ -28,7 +37,7 @@ class GizmoHttpClient():
     
     async def goDirection(self, direction, nSteps=''):
         try:
-            async with self.session.get(self._base_url + direction + nSteps) as response:
+            async with self._session.get(self._base_url + direction + nSteps) as response:
                 print(response.status)
                 if (response.status == 200):
                     print(await response.text())

@@ -11,7 +11,7 @@
          "program": "${file}",
          "console": "integratedTerminal",
          "justMyCode": true,
-         "args": ["-gp", "26784","-ep","26783"]
+         "args": ["-gp", "26784","-ep","26783","-ga","127.0.0.1","-gdp","5000"]
       }
    ]
 }

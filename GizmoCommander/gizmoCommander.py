@@ -115,18 +115,23 @@ def parseArgs():
     argParser.add_argument("-gp","--gizmo_port",help="Gizmo face-pose estimation TCP server port", required=True)
     argParser.add_argument("-ep","--eeg_port",help="EEG classification TCP server port", required=True)
     argParser.add_argument("-gdp","--gizmo_director_port",help="port to server on gizmo that takes directions", required=True)
-    
+    global EEG_PORT
+    global GIZMO_PORT
+    global GIZMO_DIRECTOR_PORT
     
     args = argParser.parse_args()
     EEG_PORT = args.eeg_port
     GIZMO_PORT = args.gizmo_port
     GIZMO_DIRECTOR_PORT = args.gizmo_director_port
+    global GIZMO_IP
     GIZMO_IP = args.gizmo_address
 
 
 async def main():
     parseArgs()
-    async with gizmoHttpClient.GizmoHttpClient(GIZMO_IP, GIZMO_DIRECTOR_PORT) as gizmoClient:
+    gizmoHttpClient.PORT = GIZMO_DIRECTOR_PORT
+    gizmoHttpClient.IP = GIZMO_IP
+    async with gizmoHttpClient.GizmoHttpClient() as gizmoClient:
         # Initially, three tasks are created. However, for each client that connects to a server
         # another task will be generated
         async with asyncio.TaskGroup() as tg:
@@ -134,6 +139,7 @@ async def main():
             gizmo_server_task = tg.create_task(gizmo_server())
             direct_gizmo_task = tg.create_task(direct_gizmo(gizmoClient))
             # take keyboard input tasks (to shut it down)
+    
       
 
 # I am using asyncio, because it allows me to create multiple tasks and run them concurrently
