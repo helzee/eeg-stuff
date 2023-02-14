@@ -121,7 +121,7 @@ def parseArgs():
     EEG_PORT = args.eeg_port
     GIZMO_PORT = args.gizmo_port
     GIZMO_DIRECTOR_PORT = args.gizmo_director_port
-    GIZMO_IP = args.gizmo_director_address
+    GIZMO_IP = args.gizmo_address
 
 
 async def main():
