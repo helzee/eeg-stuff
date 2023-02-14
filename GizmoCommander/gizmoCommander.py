@@ -21,7 +21,7 @@ GIZMO_PORT = 26784
 GIZMO_DIRECTOR_PORT = 40000
 GIZMO_IP = "10.65.65.87"
 
-NUM_STEPS = 1
+NUM_STEPS = 200
 
 # 1 byte messages (just receiving booleans)
 MSG_SIZE = 1
