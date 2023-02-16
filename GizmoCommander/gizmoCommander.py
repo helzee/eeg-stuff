@@ -12,14 +12,14 @@ import aiohttp
 # seconds between commands
 COMMAND_INTERVAL = 0.5
 # PORT the EEG classification program is sending to
-EEG_PORT = 26783
+EEG_PORT = None
 
 # Port that Gizmo's head direction program is sending to
-GIZMO_PORT = 26784
+GIZMO_PORT = None
 # IP of this base station
 
-GIZMO_DIRECTOR_PORT = 40000
-GIZMO_IP = "10.65.65.87"
+GIZMO_DIRECTOR_PORT = None
+GIZMO_IP = None
 
 NUM_STEPS = 100
 
@@ -142,16 +142,16 @@ def parseArgs():
 
 async def main():
     parseArgs()
-    gizmoHttpClient.PORT = GIZMO_DIRECTOR_PORT
-    gizmoHttpClient.IP = GIZMO_IP
-    async with gizmoHttpClient.GizmoHttpClient() as gizmoClient:
-        # Initially, three tasks are created. However, for each client that connects to a server
-        # another task will be generated
-        async with asyncio.TaskGroup() as tg:
-            eeg_server_task = tg.create_task(eeg_server())
-            gizmo_server_task = tg.create_task(gizmo_server())
-            direct_gizmo_task = tg.create_task(direct_gizmo(gizmoClient))
-            # take keyboard input tasks (to shut it down)
+
+    gizmoClient = gizmoHttpClient.GizmoHttpClient(
+        GIZMO_IP, GIZMO_DIRECTOR_PORT)
+    # Initially, three tasks are created. However, for each client that connects to a server
+    # another task will be generated
+    async with asyncio.TaskGroup() as tg:
+        eeg_server_task = tg.create_task(eeg_server())
+        gizmo_server_task = tg.create_task(gizmo_server())
+        direct_gizmo_task = tg.create_task(direct_gizmo(gizmoClient))
+        # take keyboard input tasks (to shut it down)
 
 
 # I am using asyncio, because it allows me to create multiple tasks and run them concurrently
