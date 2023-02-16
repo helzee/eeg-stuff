@@ -19,6 +19,7 @@ If you attempted to run `sudo docker start GizmoCommander`
 And you received this error: 
 > `Error response from daemon: No such container: GizmoCommander`
 > `Error: failed to start containers: GizmoCommander`
+
 This means that you need to run the container to create a new container instance in the registry that you can start/stop
 type: `./build.sh`
 Then type: `./run.sh`
