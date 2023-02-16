@@ -1,18 +1,19 @@
-#Running GizmoCommander
+# Running GizmoCommander
 GizmoCommander is completely containerized, so if you know how to use docker, then you should have no problem starting it and troubleshooting.
 Important: If you need to change ports/IPs of different components that communicate with GizmoCommander, you can do so by editing the ENV variables
 in the Dockerfile and rebuilding the image (don't forget to delete the old container in the registry!). More info about this below.
 
-##How you usually start it (if everything is working)
+## How you usually start it (if everything is working)
 If GizmoCommander has already been built and run on the machine, you should just be able to start the image with: `sudo docker start GizmoCommander`
 
-##Viewing Output/logs
+## Viewing Output/logs
 You can view the GizmoCommander program output with: `sudo docker logs GizmoCommander`
 If you want to see real-time logs type: `sudo docker logs -f GizmoCommander`
 
-##How to stop it
+## How to stop it
 To stop GizmoCommander: `sudo docker stop GizmoCommander`
 
+## Troubleshooting
 
 If you attempted to run `sudo docker start GizmoCommander`
 And you received this error: 
