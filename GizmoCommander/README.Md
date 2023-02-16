@@ -23,3 +23,6 @@ When rebuilding and running you may get this error:
 In this case, you need to delete the old container from the Docker registry before running the updated version. You can see the full registry with: sudo docker ps -a
 Type: sudo docker rm GizmoCommander
 This will remove GizmoCommander container from the registry, and you can now ./run.sh to create the updated container
+
+
+As for connecting GizmoCommander to the other programs in the system. You can change the IPs and port numbers in the Dockerfile.
