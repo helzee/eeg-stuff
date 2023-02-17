@@ -37,3 +37,8 @@ Type: `sudo docker rm GizmoCommander`
 This will remove GizmoCommander container from the registry, and you can now `./run.sh` to create the updated container
 
 As for connecting GizmoCommander to the other programs in the system. You can change the IPs and port numbers in the Dockerfile. Then rebuild,run
+
+## Running on Windows
+If you have docker on windows, you can easily run this container! Just keep in mind, host networks aren't supported on windows, so you need to change
+the docker run command to this: `docker run -p 26783:26783 26784:26784 -name GizmoCommanderWin -t helzee/gizmo-commander:1.0`
+Here you can see that we map each application/container port to a host port.
